@@ -187,6 +187,41 @@ def get_books_sorted_by_author():
     except Exception as e:
         logger.error(f"Error sorting books by author: {e}")
         return []
+    
+def get_books_with_authors():
+    """
+    Retrieves all books with authors, with authors returned as a list for each book.
+    """
+    try:
+        query = """SELECT Books.*, Authors.author_id, Authors.author_name 
+                   FROM Books
+                   JOIN BookAuthors ON Books.book_id = BookAuthors.book_id
+                   JOIN Authors ON BookAuthors.author_id = Authors.author_id
+                   ORDER BY Books.title ASC"""
+        
+        mycursor.execute(query)
+        rows = mycursor.fetchall()
+        books_with_authors = {}
+        
+        # Organize the results so that each book has a list of authors
+        for row in rows:
+            book_id = row[0]
+            author_name = row[-1]
+
+            if book_id not in books_with_authors:
+                row = row[:-1]
+                row += ([],)
+                books_with_authors[book_id] = row
+            
+            books_with_authors[book_id][-1].append(author_name)
+        
+        logger.info("Retrieved all books with authors")
+        return list(books_with_authors.values())
+    
+    except Exception as e:
+        logger.error(f"Error retrieving books with authors: {e}")
+        return []
+
 
 def get_books_sorted_by_recent_sessions():
     """

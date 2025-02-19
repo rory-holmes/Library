@@ -19,10 +19,20 @@ def add_book():
     add_book_with_author(book_info['Title'], book_info['Authors'], book_info['Publisher'], book_info['Published Date'], book_info['Description'])
 
 def display_books():
-    books = get_books_sorted_by_name()
-    for book in books:
-        print(books)
+    books = get_books_with_authors()
+    return books
 
+def add_books(title, author):
+    add_book_with_author(title, author)
+
+def loop_books():
+    with open('books.txt') as topo_file:
+        for line in topo_file:
+            if len(line) > 2:
+                l = line.split(" / ")
+                author, title = l[0], l[1]
+                add_books(title, [author])
+            
 if __name__ == "__main__":
     
-    display_books()
+    loop_books()
