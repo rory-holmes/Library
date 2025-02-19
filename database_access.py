@@ -30,5 +30,29 @@ def connectdb():
   except Exception as e:
     logging.error(f"Error connecting to librarydb: {e}")
   
-
+def create_tables():
+  mycursor.exectute("""CREATE TABLE `books` 
+                    (`book_id` int(11) NOT NULL AUTO_INCREMENT,
+                    `name` VARACHAR(255) NOT NULL, 
+                    `author_id` int(11) NOT NULL,
+                    `series_id` VARCHAAR(255),
+                    `special` enum('T','F'),
+                    `session_id` int(11),
+                    PRIMARY KEY (`book_id`),
+                    FOREIGN KEY (`author_id`),
+                    FOREIGN KEY (`session_id`),
+                    FOREIGN KEY (`series_id`))""")
+  mycursor.exectute("""CREATE TABLE `author` 
+                    (`author_id` int(11) NOT NULL AUTO_INCREMENT,
+                    `author_name` VARACHAR(255) NOT NULL, 
+                    PRIMARY KEY (`author_id`))""")
+  mycursor.exectute("""CREATE TABLE `series` 
+                    (`series_id` int(11) NOT NULL AUTO_INCREMENT,
+                    `series_name` VARACHAR(255) NOT NULL, 
+                    PRIMARY KEY (`series_id`))""")
+  mycursor.exectute("""CREATE TABLE `session` 
+                    (`session_id` int(11) NOT NULL AUTO_INCREMENT,
+                    `book_id` int(11) NOT NULL,
+                    PRIMARY KEY (`session_id`),
+                    FOREIGN KEY (`book_id`))""")
 connectdb()
