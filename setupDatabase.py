@@ -2,6 +2,9 @@ import mysql.connector
 import logging
 
 def create_database():
+  """
+  Creates librarydb database and connects to it, calls create_all_tables method
+  """
   logging.info("Creating database")
   mydb = mysql.connector.connect(
     host="localhost",
@@ -13,17 +16,29 @@ def create_database():
   try:
     mycursor.execute("CREATE DATABASE librarydb")
     logging.info("Created database {librarydb}")
+    connectdb()
+    create_all_tables()
   except Exception as e:
     logging.error(f"Error creating db: {e}")
 
 def check_database_created():
+  """
+  Checks if librarydb database exists, connects to it and calls check_tables_created method if so, 
+  otherwise creates database
+  """
   mycursor.execute("SHOW DATABASES LIKE 'librarydb'")
   if "librarydb" in mycursor:
     logging.info("Database {librarydb} already exists")
+    connectdb()
+    check_tables_created()
   else:
     logging.info("No database like {librarydb} exists")
+    create_database()
 
 def check_tables_created():
+  """
+  Checks what tables are created, creates ones that are not
+  """
   expected_tables = {"Books": create_books_table,
                       "Authors": create_authors_table,
                         "BookAuthors": create_bookAuthors_table,
@@ -34,8 +49,11 @@ def check_tables_created():
     logging.info(f"{table} exists")
   for _, method in expected_tables:
     method()
-    
+
 def connectdb():
+  """
+  Connects cursor to the librarydb db
+  """
   global mycursor
   try:
     mydb = mysql.connector.connect(
@@ -88,6 +106,9 @@ def create_session_table():
   logging.info("Created {ReadingSession} Table")
 
 def create_all_tables():
+  """
+  Creates all tables for the librarydb
+  """
   try:
     create_books_table()
     create_authors_table()
