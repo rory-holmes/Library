@@ -2,7 +2,6 @@ import mysql.connector
 import logging
 
 logger = logging.getLogger(__name__)
-logger.info("Setup logger")
 
 def create_database():
   """
@@ -90,10 +89,11 @@ def create_books_table():
   mycursor = mydb.cursor()
   mycursor.execute("""CREATE TABLE `Books` 
                   (`book_id` int(11) NOT NULL AUTO_INCREMENT,
-                  `title` VARCHAR(255) NOT NULL, 
+                  `title` VARCHAR(255) UNIQUE NOT NULL, 
                   `publisher` VARCHAR(255),
                   `publishedDate` DATE,
                   `description` TEXT,
+                  `finished` BOOLEAN DEFAULT FALSE,
                   `special` BOOLEAN DEFAULT FALSE,
                   PRIMARY KEY (`book_id`))""")
   logger.info("Created Table: Books")
@@ -150,6 +150,7 @@ def create_session_table():
                       `book_id` int(11) NOT NULL,
                       `session_start` DATETIME NOT NULL,
                       `session_end` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                      `finished_book` BOOLEAN DEFAULT FALSE,
                       PRIMARY KEY (`session_id`),
                       FOREIGN KEY (`book_id`) REFERENCES Books(book_id) ON DELETE CASCADE)""")
   logger.info("Created Table: ReadingSession")
@@ -178,3 +179,6 @@ def create_all_tables():
   except Exception as e:
     logger.error("Error creating tables: %s", e)
 
+
+if __name__ == "__main__":
+  check_database_created()
